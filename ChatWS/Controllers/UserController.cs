@@ -19,14 +19,12 @@ namespace ChatWS.Controllers
         private readonly AppDbContext DbContext;
         private readonly HashAndVerifyPassword hashAndVerify;
 
-
         public UserController(AppDbContext dbContext, HashAndVerifyPassword hashAndVerify)
         {
             this.DbContext = dbContext;
             this.hashAndVerify = hashAndVerify;
-
-
         }
+
         [HttpGet]
         public IActionResult GetAllUsers()
         {
@@ -70,14 +68,15 @@ namespace ChatWS.Controllers
             DbContext.users.Remove(deletedUser);
             DbContext.SaveChanges();
             return NoContent();
-
         }
+
         [HttpPost("hash")]
         public IActionResult HashPassword([FromBody] HashAndVerifyDTO hashAndVerifyDTO)
         {
             var hash = hashAndVerify.HashPassword(hashAndVerifyDTO.PlainPassword);
             return Ok(new { hashed = hash });
         }
+
         [HttpPost("verify")]
         public IActionResult verifyPassword([FromBody] HashAndVerifyDTO hashAndVerifyDTO)
         {
@@ -86,10 +85,7 @@ namespace ChatWS.Controllers
             return Ok(new { verify = isVerified });
         }
 
-        [HttpPost("{Registration}")]
-
-
-
+        [HttpPost("Register")]
         public IActionResult RegisterUser([FromBody] RegisterUsersDTO registerUsers)
         {
             var service = new HashAndVerifyPassword();
@@ -113,10 +109,9 @@ namespace ChatWS.Controllers
                 {
                     flag = true;
                     break;
-
                 }
-
             }
+
             if (!flag)
             {
                 return StatusCode(400, " Password must contain a special value");
@@ -132,15 +127,13 @@ namespace ChatWS.Controllers
             }
             DbContext.Add(user);
 
-
-
-
             DbContext.SaveChanges();
 
             return Ok("Registration has been successfull");
 
         }
 
+        [HttpPost("Login")]
         public IActionResult Login([FromBody] RegisterUsersDTO registerUsers)
         {
             User loginUser = new User(registerUsers.PlainPassword, registerUsers.userName);
@@ -156,7 +149,6 @@ namespace ChatWS.Controllers
             }
             
             return Ok($"User: {loginUser} is logged on");
-
         }
     }
 }
